@@ -18,19 +18,19 @@ var RestaurantSchema = new Schema({
 		required : true
     },
     geoposition : {
-        type : [int, int],
+        type : [Number, Number],
         index : 1,
 		unique : true,
 		required : true
     },
     comment : {
-        type : string,
+        type : String,
         index : 1,
 		unique : true,
 		required : true
     },
     price_level : {
-        type : int,
+        type : Number,
         index : 1,
 		unique : true,
 		required : true
