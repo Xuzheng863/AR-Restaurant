@@ -29,6 +29,6 @@ app.get('/',function (req,res){
     res.render('index')
 })
 
-// routes(app);
+routes(app);
 
 app.listen(port);

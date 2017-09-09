@@ -23,12 +23,12 @@ var RestaurantSchema = new Schema({
 		unique : true,
 		required : true
     },
-    comment : {
-        type : String,
+    rating : {
+        type : Number,
         index : 1,
 		unique : true,
 		required : true
-    },
+	},
     price_level : {
         type : Number,
         index : 1,

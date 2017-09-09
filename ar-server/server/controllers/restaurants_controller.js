@@ -16,8 +16,8 @@ module.exports = {
                     name: body.results[index].name,
                     address: body.results[index].vicinity,
                     geoposition : [body.results[index].geometry.location.lat,body.results[index].geometry.location.lng],
-                    price_level : body.results[index].price_level ? body.results[index].price_level : 0,
-                    comment : ""
+                    rating : 3 ,
+                    price_level : body.results[index].price_level ? body.results[index].price_level : 0
                 });
     
                 //save the new restaurant to Mongodb
@@ -29,5 +29,14 @@ module.exports = {
             }
         })
         res.sendStatus(200);
+    },
+    fetch_restaurants(req,res){
+        Restaurant.find({},function(err,restaurants){
+            if(err){
+                console.log(err);
+            }else{
+                res.json(restaurants);
+            }
+        });
     }
 }
