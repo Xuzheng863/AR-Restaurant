@@ -24,17 +24,16 @@ import Foundation
 import CoreLocation
 
 struct PlacesLoader {
-  let apiURL = "https://maps.googleapis.com/maps/api/place/"
-  let apiKey = "AIzaSyBRnrrLKWa4WOL3-jYnxTM9NDd2Sqt8J2Q"
+  let apiURL = "https://ar-rest.herokuapp.com/api/restaurants_fetch"
   
   func loadPOIS(location: CLLocation, radius: Int = 30, handler: @escaping (NSDictionary?, NSError?) -> Void) {
     print("Load pois")
     let latitude = location.coordinate.latitude
     let longitude = location.coordinate.longitude
     
-    let uri = apiURL + "nearbysearch/json?location=\(latitude),\(longitude)&radius=\(radius)&sensor=true&types=establishment&key=\(apiKey)"
+//    let uri = apiURL + "nearbysearch/json?location=\(latitude),\(longitude)&radius=\(radius)&sensor=true&types=establishment&key=\(apiKey)"
     
-    let url = URL(string: uri)!
+    let url = URL(string: apiURL)!
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let dataTask = session.dataTask(with: url) { data, response, error in
       if let error = error {
@@ -42,13 +41,11 @@ struct PlacesLoader {
       } else if let httpResponse = response as? HTTPURLResponse {
         if httpResponse.statusCode == 200 {
           print(data!)
-          
           do {
             let responseObject = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
             guard let responseDict = responseObject as? NSDictionary else {
               return
             }
-            
             handler(responseDict, nil)
       
           } catch let error as NSError {
@@ -63,7 +60,7 @@ struct PlacesLoader {
   
   func loadDetailInformation(forPlace: Place, handler: @escaping (NSDictionary?, NSError?) -> Void) {
     
-    let uri = apiURL + "details/json?reference=\(forPlace.reference)&sensor=true&key=\(apiKey)"
+    let uri = "https://ar-rest.herokuapp.com/api/restaurants_detail"
     
     let url = URL(string: uri)!
     let session = URLSession(configuration: URLSessionConfiguration.default)
