@@ -24,31 +24,39 @@ import Foundation
 import CoreLocation
 
 class Place: ARAnnotation {
-  let reference: String
   let placeName: String
   let address: String
-  var phoneNumber: String?
-  var website: String?
+  let rating: Double
+  let price_level: Int!
+  let price_tag: String
+  
   
   var infoText: String {
     get {
       var info = "Address: \(address)"
       
-      if phoneNumber != nil {
-        info += "\nPhone: \(phoneNumber!)"
-      }
+      info += "\nRatings: \(rating)"
       
-      if website != nil {
-        info += "\nweb: \(website!)"
-      }
+      info += "\nPrice Level: \(price_tag)"
+      
       return info
     }
   }
   
-  init(location: CLLocation, reference: String, name: String, address: String) {
+  init(location: CLLocation, name: String, address: String, price_level: Int, rating: Double) {
     placeName = name
-    self.reference = reference
     self.address = address
+    self.price_level = price_level
+    self.rating = rating
+    
+    var price = ""
+    while (self.price_level!>0)
+    {
+      price += "$"
+      self.price_level!-=1
+    }
+    
+    self.price_tag = price
     
     super.init()
     

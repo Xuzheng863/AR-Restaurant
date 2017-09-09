@@ -40,32 +40,31 @@ extension ViewController: CLLocationManagerDelegate {
           startedLoadingPOIs = true
           //2
           let loader = PlacesLoader()
-          loader.loadPOIS(location: location, radius: 1000) { placesDict, error in
+          loader.loadPOIS(location: location, radius: 1000) { placesArray, error in
             //3
-            if let dict = placesDict {
+            if let array = placesArray {
               //1
-              print(dict)
-//              guard let placesArray = dict.object(forKey: "results") as? [NSDictionary]  else { return }
-//              //2
-//              for placeDict in placesArray {
-//                //3
-//                let latitude = placeDict.value(forKeyPath: "geometry.location.lat") as! CLLocationDegrees
-//                let longitude = placeDict.value(forKeyPath: "geometry.location.lng") as! CLLocationDegrees
-//                let reference = placeDict.object(forKey: "reference") as! String
-//                let name = placeDict.object(forKey: "name") as! String
-//                let address = placeDict.object(forKey: "vicinity") as! String
-//                
-//                let location = CLLocation(latitude: latitude, longitude: longitude)
-//                //4
-//                let place = Place(location: location, reference: reference, name: name, address: address)
-//                self.places.append(place)
-//                //5
-//                let annotation = PlaceAnnotation(location: place.location!.coordinate, title: place.placeName)
-//                //6
-//                DispatchQueue.main.async {
-//                  self.mapView.addAnnotation(annotation)
-//                }
-//              }
+              for placeDict in array {
+                //3
+                let latitude = placeDict.value(forKeyPath: "latitude") as! CLLocationDegrees
+                let longitude = placeDict.value(forKeyPath: "longitude") as! CLLocationDegrees
+                let name = placeDict.object(forKey: "name") as! String
+                let address = placeDict.object(forKey: "address") as! String
+                let rt = placeDict.object(forKey: "rating") as! NSArray
+                let rating = rt[0] as! Double
+                let price_level = placeDict.object(forKey: "price_level") as! Int
+                
+                let location = CLLocation(latitude: latitude, longitude: longitude)
+                //4
+                let place = Place(location: location, name: name, address: address, price_level: price_level, rating: rating)
+                self.places.append(place)
+                //5
+                let annotation = PlaceAnnotation(location: place.location!.coordinate, title: place.placeName)
+                //6
+                DispatchQueue.main.async {
+                  self.mapView.addAnnotation(annotation)
+                }
+              }
             }
           }
         }
@@ -87,22 +86,8 @@ extension ViewController: ARDataSource {
 
 extension ViewController: AnnotationViewDelegate {
   func didTouch(annotationView: AnnotationView) {
-    //1
-    if let annotation = annotationView.annotation as? Place {
-      //2
-      let placesLoader = PlacesLoader()
-      placesLoader.loadDetailInformation(forPlace: annotation) { resultDict, error in
-        
-        //3
-        if let infoDict = resultDict?.object(forKey: "result") as? NSDictionary {
-          annotation.phoneNumber = infoDict.object(forKey: "formatted_phone_number") as? String
-          annotation.website = infoDict.object(forKey: "website") as? String
-          
-          //4
-          self.showInfoView(forPlace: annotation)
-        }
-      }
-    }
+    let annotation = annotationView.annotation as! Place
+    self.showInfoView(forPlace: annotation)
   }
 }
 
@@ -142,11 +127,21 @@ class ViewController: UIViewController {
   }
   
   func showInfoView(forPlace place: Place) {
-    //1
     let alert = UIAlertController(title: place.placeName , message: place.infoText, preferredStyle: UIAlertControllerStyle.alert)
-    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-    //2
+    let oneAction = UIAlertAction(title: "One", style: UIAlertActionStyle.default) { _ in }
+    let twoAction = UIAlertAction(title: "Two", style: UIAlertActionStyle.default) { _ in }
+    let threeAction = UIAlertAction(title: "Three", style: UIAlertActionStyle.default) { _ in }
+    let fourAction = UIAlertAction(title: "Four", style: UIAlertActionStyle.default) { _ in }
+    let fiveAction = UIAlertAction(title: "Five", style: UIAlertActionStyle.default) { _ in }
+    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
+    alert.addAction(oneAction)
+    alert.addAction(twoAction)
+    alert.addAction(threeAction)
+    alert.addAction(fourAction)
+    alert.addAction(fiveAction)
+    alert.addAction(cancelAction)
     arViewController.present(alert, animated: true, completion: nil)
+    return
   }
   
 }

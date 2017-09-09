@@ -24,43 +24,15 @@ import Foundation
 import CoreLocation
 
 struct PlacesLoader {
-  let apiURL = "https://ar-rest.herokuapp.com/api/restaurants_fetch"
+  let apiURL = "http://128.237.189.3:3000/api/restaurants_fetch"
   
-  func loadPOIS(location: CLLocation, radius: Int = 30, handler: @escaping (NSDictionary?, NSError?) -> Void) {
+  func loadPOIS(location: CLLocation, radius: Int = 30, handler: @escaping (Array<NSDictionary>?, NSError?) -> Void) {
     print("Load pois")
     let latitude = location.coordinate.latitude
     let longitude = location.coordinate.longitude
     
-//    let uri = apiURL + "nearbysearch/json?location=\(latitude),\(longitude)&radius=\(radius)&sensor=true&types=establishment&key=\(apiKey)"
-    
-    let url = URL(string: apiURL)!
-    let session = URLSession(configuration: URLSessionConfiguration.default)
-    let dataTask = session.dataTask(with: url) { data, response, error in
-      if let error = error {
-        print(error)
-      } else if let httpResponse = response as? HTTPURLResponse {
-        if httpResponse.statusCode == 200 {
-          print(data!)
-          do {
-            let responseObject = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-            guard let responseDict = responseObject as? NSDictionary else {
-              return
-            }
-            handler(responseDict, nil)
-      
-          } catch let error as NSError {
-            handler(nil, error)
-          }
-        }
-      }
-    }
-    
-    dataTask.resume()
-  }
-  
-  func loadDetailInformation(forPlace: Place, handler: @escaping (NSDictionary?, NSError?) -> Void) {
-    
-    let uri = "https://ar-rest.herokuapp.com/api/restaurants_detail"
+    let uri = apiURL + "\(latitude)/\(longitude)"
+    print(uri)
     
     let url = URL(string: uri)!
     let session = URLSession(configuration: URLSessionConfiguration.default)
@@ -70,15 +42,15 @@ struct PlacesLoader {
       } else if let httpResponse = response as? HTTPURLResponse {
         if httpResponse.statusCode == 200 {
           print(data!)
-          
           do {
             let responseObject = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-            guard let responseDict = responseObject as? NSDictionary else {
+            //print(type(of:responseObject))
+            guard let responseArray = responseObject as? [NSDictionary] else {
               return
             }
-            
-            handler(responseDict, nil)
-            
+            //print(type(of:responseArray))
+            handler(responseArray, nil)
+      
           } catch let error as NSError {
             handler(nil, error)
           }
@@ -87,6 +59,5 @@ struct PlacesLoader {
     }
     
     dataTask.resume()
-
   }
 }
