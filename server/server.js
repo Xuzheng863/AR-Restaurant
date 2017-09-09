@@ -3,18 +3,12 @@ const path = require("path");
 const mongoose = require('mongoose');
 const routes = require('./routes/routes');
 const bodyParser = require('body-parser');
-require('dotenv').config()
 
 // connect to the mongodb local or on heroku
 // URI is provided by heroku in the .env file
 
 mongoose.Promise = global.Promise;
-
-// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Lunch-vote',{
-//   useMongoClient: true,
-// });
-
-mongoose.connect('mongodb://localhost:27017/Lunch-vote',{
+mongoose.connect(process.env.MONGODB_URI,{
   useMongoClient: true,
 });
 
@@ -35,4 +29,6 @@ app.get('/',function (req,res){
     res.render('index')
 })
 
-app.listen(port,process.env.Listen_URL);
+// routes(app);
+
+app.listen(port);
